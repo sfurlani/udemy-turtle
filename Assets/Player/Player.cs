@@ -8,6 +8,7 @@ public class Player : MonoBehaviour {
 	[SerializeField] private float jumpImpulse = 10f;
 	[HideInInspector] [SerializeField] private bool isJumping = false;
 	[HideInInspector] [SerializeField] private float jumpScale = 0;
+	private bool isPlaying = true;
 
 	new private Rigidbody rigidbody;
 	private Animator animator;
@@ -16,13 +17,19 @@ public class Player : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		rigidbody = GetComponent<Rigidbody>();
+		rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
 		animator = GetComponent<Animator>();
+	}
+
+	public bool IsPlaying() {
+		return isPlaying;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (!isPlaying) { return; }
 		if (Input.GetButtonDown("Jump")) { 
-			animator.SetTrigger("jump");
+			Jump();
 		}
 		float x = isAdvancing ? playSpeed : 0;
 		float y = isJumping ? jumpImpulse*jumpScale : 0;
@@ -30,12 +37,19 @@ public class Player : MonoBehaviour {
 		rigidbody.velocity = new Vector3(x, y, 0);
 	}
 
-	void JumpRotate() {
-		Rigidbody rb = GetComponent<Rigidbody>();
-		Vector3 v = rb.velocity;
-		Vector3 euler = transform.eulerAngles;
-		float z = (euler.z + v.y) / 2f;
-		euler.z = Mathf.Clamp(z, 0f, 90f);
-		transform.rotation = Quaternion.Euler(euler);
+	public void Jump() {
+		if (!isPlaying) { return; }
+		animator.SetTrigger("jump");
+	}
+
+	void OnSuffocation() {
+		OnDeath();
+	}
+
+	void OnDeath() {
+		animator.SetTrigger("die");
+		isPlaying = false;
+		rigidbody.useGravity = true;
+		rigidbody.constraints = RigidbodyConstraints.None;
 	}
 }

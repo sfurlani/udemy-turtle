@@ -9,5 +9,4 @@ public class Obstacle : MonoBehaviour {
 	public Vector3 maxRotation = Vector3.one*360f;
 	public float minScale = 1f;
 	public float maxScale = 1f;
-
 }

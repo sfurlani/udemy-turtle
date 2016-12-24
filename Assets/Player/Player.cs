@@ -3,46 +3,31 @@ using System.Collections;
 
 public class Player : MonoBehaviour {
 
-	public bool isAdvancing = true;
-	public float playSpeed = 0.01f;
-	public float jumpImpulse = 10f;
-	private bool canJump = true;
+	[SerializeField] private bool isAdvancing = true;
+	[SerializeField] private float playSpeed = 0.01f;
+	[SerializeField] private float jumpImpulse = 10f;
+	[HideInInspector] [SerializeField] private bool isJumping = false;
+	[HideInInspector] [SerializeField] private float jumpScale = 0;
+
+	new private Rigidbody rigidbody;
+	private Animator animator;
+
 
 	// Use this for initialization
 	void Start () {
-	
+		rigidbody = GetComponent<Rigidbody>();
+		animator = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (isAdvancing) {
-			Advance();
+		if (Input.GetButtonDown("Jump")) { 
+			animator.SetTrigger("jump");
 		}
-
-		if (Input.GetButtonDown("Jump")) {
-			Jump();
-		}
-			
-
-	}
-
-	void Advance() {
-		float dx = Time.deltaTime * playSpeed;
-		transform.Translate(dx, 0, 0, Space.World);
-	}
-
-	void Jump() {
-		if (!canJump) { return; }
-		canJump = false;
-		Rigidbody rb = GetComponent<Rigidbody>();
-		rb.AddForce(0, jumpImpulse, 0,ForceMode.Impulse);
-
-		Animator an = GetComponent<Animator>();
-		an.SetTrigger("jump");
-	}
-
-	void JumpEnd() {
-		canJump = true;
+		float x = isAdvancing ? playSpeed : 0;
+		float y = isJumping ? jumpImpulse*jumpScale : 0;
+		y += Time.deltaTime * -9.81f;
+		rigidbody.velocity = new Vector3(x, y, 0);
 	}
 
 	void JumpRotate() {

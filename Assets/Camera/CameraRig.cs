@@ -23,7 +23,7 @@ public class CameraRig : MonoBehaviour {
 	/// </summary>
 	private Vector3 offset = Vector3.zero;
 
-	private Vector3 originalRotation;
+//	private Vector3 originalRotation;
 
 	new private Camera camera;
 
@@ -31,7 +31,7 @@ public class CameraRig : MonoBehaviour {
 	void Start () 
 	{
 		camera = GetComponentInChildren<Camera>();
-		originalRotation = transform.eulerAngles;
+//		originalRotation = transform.eulerAngles;
 		offset = transform.position - target.transform.position;
 	}
 

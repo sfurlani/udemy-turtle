@@ -7,18 +7,17 @@ public class Breathe : MonoBehaviour {
 	public Slider display;
 	public float decay = 0.1f;
 	public float current = 1f;
-	public bool isBreathing = true;
 
 	void Start() {
 		Breath();
 	}
 
 	void LateUpdate () {
-		if (!isBreathing) { return; }
+		if (GameManager.mode != GameMode.Play) { return; }
+
 		current = Mathf.Clamp(current - Time.deltaTime * decay, 0, 1f);
 
 		if (current <= 0) {
-			isBreathing = false;
 			SendMessage("OnSuffocation");
 		}
 
@@ -29,18 +28,15 @@ public class Breathe : MonoBehaviour {
 	}
 
 	void Breath(float air = 1f) {
+		if (GameManager.mode != GameMode.Play) { return; }
 		current = Mathf.Clamp((current + air)/2f, 0f, 1f);
-		isBreathing = true;
 	}
 
 	void OnCollisionStay(Collision collision) {
+		if (GameManager.mode != GameMode.Play) { return; }
 		if (collision.gameObject.tag != "Water") { return; }
 
 		Breath();
-	}
-
-	void OnDeath() {
-		isBreathing = false;
 	}
 
 }

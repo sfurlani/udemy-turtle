@@ -10,17 +10,15 @@ public class Health : MonoBehaviour {
 
 	public float maxHealth = 100f;
 	public float currentHealth;
-	public bool isLiving = true;
 
 	void Start() {
 		Heal(maxHealth);
 	}
 
 	void LateUpdate() {
-		if (!isLiving) { return; } 
+		if (GameManager.mode != GameMode.Play) { return; }
 
 		if (currentHealth == 0) {
-			isLiving = false;
 			SendMessage("OnDeath");
 		}
 
@@ -51,8 +49,10 @@ public class Health : MonoBehaviour {
 	}
 
 	void DamageCollision(Collision collision, bool onEnter = false) {
+		if (GameManager.mode != GameMode.Play) { return; }
+
 		Damage damage = collision.gameObject.GetComponent<Damage>();
-		if (!damage || !isLiving) { return; }
+		if (!damage) { return; }
 
 		ContactPoint contact = collision.contacts[0];
 		bloodParticles.transform.position = contact.point;
@@ -68,7 +68,4 @@ public class Health : MonoBehaviour {
 
 	}
 
-	void OnSuffocation() {
-		isLiving = false;
-	}
 }

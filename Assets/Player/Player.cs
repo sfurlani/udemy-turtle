@@ -8,7 +8,7 @@ public class Player : MonoBehaviour {
 	[SerializeField] private float jumpImpulse = 10f;
 	[HideInInspector] [SerializeField] private bool isJumping = false;
 	[HideInInspector] [SerializeField] private float jumpScale = 0;
-	private bool isPlaying = true;
+
 
 	new private Rigidbody rigidbody;
 	private Animator animator;
@@ -21,13 +21,10 @@ public class Player : MonoBehaviour {
 		animator = GetComponent<Animator>();
 	}
 
-	public bool IsPlaying() {
-		return isPlaying;
-	}
-	
 	// Update is called once per frame
 	void Update () {
-		if (!isPlaying) { return; }
+		if (GameManager.mode != GameMode.Play) { return; }
+
 		if (Input.GetButtonDown("Jump")) { 
 			Jump();
 		}
@@ -38,7 +35,7 @@ public class Player : MonoBehaviour {
 	}
 
 	public void Jump() {
-		if (!isPlaying) { return; }
+		if (GameManager.mode != GameMode.Play) { return; }
 		animator.SetTrigger("jump");
 	}
 
@@ -48,7 +45,7 @@ public class Player : MonoBehaviour {
 
 	void OnDeath() {
 		animator.SetTrigger("die");
-		isPlaying = false;
+		GameManager.mode = GameMode.End;
 		rigidbody.useGravity = true;
 		rigidbody.constraints = RigidbodyConstraints.None;
 	}
